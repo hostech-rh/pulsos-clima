@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulso de Clima Junio — HOSTECH</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --main:#C4A000; --main-l:#F5E07A; --main-xl:#FFFBE6;
+    --yellow:#FAD83F; --yellow-l:#FFFBE6;
+    --blue:#4563FF; --blue-l:#E8ECFF;
+    --cream:#F6F5EC; --ink:#1C1C1A; --ink-mid:#4A4A47;
+    --ink-muted:#888780; --border:#E0DFD6; --white:#FFFFFF;
+    --radius:14px; --radius-sm:8px;
+  }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+  .site-header { background:var(--white); border-bottom:1px solid var(--border); padding:14px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand-logo { width:32px; height:32px; border-radius:8px; background:var(--main); display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:15px; color:var(--white); }
+  .brand-name { font-size:13px; font-weight:600; color:var(--ink); letter-spacing:0.04em; text-transform:uppercase; }
+  .brand-dept { font-size:12px; color:var(--ink-muted); }
+  .header-badge { background:var(--main-xl); color:var(--main); font-size:11px; font-weight:500; padding:4px 10px; border-radius:20px; border:1px solid var(--main-l); }
+  .hero { background:var(--white); border-bottom:1px solid var(--border); padding:40px 24px 36px; text-align:center; }
+  .hero-eyebrow { font-size:11px; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--main); margin-bottom:10px; }
+  .hero h1 { font-family:'DM Serif Display',serif; font-size:clamp(26px,5vw,36px); color:var(--ink); line-height:1.2; margin-bottom:12px; }
+  .hero p { font-size:15px; color:var(--ink-mid); max-width:480px; margin:0 auto 24px; line-height:1.6; }
+  .privacy-pill { display:inline-flex; align-items:center; gap:7px; background:var(--cream); border:1px solid var(--border); border-radius:30px; padding:7px 16px; font-size:12px; color:var(--ink-mid); }
+  .lock-icon { width:14px; height:14px; background:var(--main); border-radius:3px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lock-icon::after { content:''; width:5px; height:5px; border-radius:50%; background:var(--white); display:block; }
+  .main { max-width:640px; margin:0 auto; padding:32px 20px 64px; }
+  .card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:28px; margin-bottom:16px; }
+  .card-tag { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; color:var(--main); margin-bottom:12px; }
+  .card-tag .dot { width:6px; height:6px; border-radius:50%; background:var(--main); }
+  .card h2 { font-family:'DM Serif Display',serif; font-size:20px; color:var(--ink); margin-bottom:6px; line-height:1.3; }
+  .card p.sub { font-size:13px; color:var(--ink-muted); line-height:1.6; }
+  .privacy-note { background:var(--cream); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; display:flex; gap:10px; align-items:flex-start; margin-top:8px; }
+  .pn-icon { width:18px; height:18px; flex-shrink:0; background:var(--main); border-radius:4px; display:flex; align-items:center; justify-content:center; margin-top:1px; }
+  .pn-icon::after { content:''; width:6px; height:6px; border-radius:50%; background:var(--white); display:block; }
+  .privacy-note p { font-size:12px; color:var(--ink-mid); line-height:1.6; }
+  .nivel-grid { display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+  .nivel-btn { display:flex; align-items:center; gap:14px; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; background:var(--white); cursor:pointer; transition:all 0.2s; }
+  .nivel-btn:hover { border-color:var(--main); background:var(--main-xl); }
+  .nivel-btn.selected { border-color:var(--main); background:var(--main-xl); }
+  .nivel-radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+  .nivel-btn.selected .nivel-radio { border-color:var(--main); background:var(--main); }
+  .nivel-btn.selected .nivel-radio::after { content:''; width:6px; height:6px; border-radius:50%; background:var(--white); display:block; }
+  .nivel-nombre { font-size:13px; font-weight:500; color:var(--ink); }
+  .nivel-desc { font-size:11px; color:var(--ink-muted); margin-top:2px; }
+  .nivel-nota { background:var(--yellow-l); border:1px solid #F0D030; border-radius:var(--radius-sm); padding:10px 14px; display:flex; gap:8px; align-items:flex-start; margin-top:12px; }
+  .nivel-nota p { font-size:12px; color:var(--ink-mid); line-height:1.5; }
+  .progress-bar-wrap { background:var(--border); border-radius:10px; height:4px; margin-bottom:20px; overflow:hidden; }
+  .progress-bar-fill { height:100%; border-radius:10px; background:var(--main); transition:width 0.4s ease; }
+  .bloque-indicator { display:flex; align-items:center; gap:10px; background:var(--main-xl); border:1px solid var(--main-l); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:20px; }
+  .bi-dot { width:10px; height:10px; border-radius:50%; background:var(--main); flex-shrink:0; }
+  .bi-text { font-size:12px; color:var(--main); font-weight:500; }
+  .pregunta-txt { font-size:15px; font-weight:500; color:var(--ink); margin-bottom:14px; line-height:1.5; }
+  .opciones { display:flex; flex-direction:column; gap:8px; }
+  .opcion { display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border:1.5px solid var(--border); border-radius:var(--radius-sm); cursor:pointer; background:var(--white); transition:all 0.18s; }
+  .opcion:hover { border-color:var(--main); background:var(--main-xl); }
+  .opcion.selected { border-color:var(--main); background:var(--main-xl); }
+  .opcion-radio { width:18px; height:18px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+  .opcion.selected .opcion-radio { border-color:var(--main); background:var(--main); }
+  .opcion-text { font-size:13px; color:var(--ink); line-height:1.5; }
+  .open-label { font-size:13px; font-weight:500; color:var(--ink); margin-bottom:6px; display:block; }
+  .open-sub { font-size:12px; color:var(--ink-muted); margin-bottom:12px; }
+  textarea { width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:14px; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--ink); background:var(--white); resize:vertical; min-height:100px; line-height:1.6; transition:border-color 0.2s; }
+  textarea:focus { outline:none; border-color:var(--main); }
+  textarea::placeholder { color:var(--ink-muted); }
+  .char-count { font-size:11px; color:var(--ink-muted); text-align:right; margin-top:6px; }
+  .nav-row { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+  .btn-back { font-size:13px; color:var(--ink-muted); background:none; border:none; cursor:pointer; padding:8px 0; font-family:'DM Sans',sans-serif; }
+  .btn-back:hover { color:var(--ink); }
+  .btn-next { background:var(--main); color:var(--white); border:none; border-radius:30px; padding:12px 28px; font-size:14px; font-weight:500; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
+  .btn-next:hover { background:#A88800; transform:translateY(-1px); }
+  .btn-next:disabled { background:var(--border); color:var(--ink-muted); transform:none; cursor:not-allowed; }
+  .success-screen { text-align:center; padding:48px 20px; }
+  .success-icon { width:72px; height:72px; border-radius:50%; background:var(--yellow); margin:0 auto 24px; display:flex; align-items:center; justify-content:center; font-size:32px; }
+  .success-screen h2 { font-family:'DM Serif Display',serif; font-size:26px; color:var(--ink); margin-bottom:10px; }
+  .success-screen p { font-size:14px; color:var(--ink-mid); line-height:1.6; max-width:360px; margin:0 auto 24px; }
+  .success-badge { display:inline-flex; align-items:center; gap:8px; background:var(--cream); border:1px solid var(--border); border-radius:30px; padding:8px 18px; font-size:12px; color:var(--ink-muted); }
+  footer { text-align:center; padding:24px; font-size:11px; color:var(--ink-muted); border-top:1px solid var(--border); }
+  @media (max-width:480px) { .card { padding:20px; } .hero { padding:28px 20px; } }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="brand">
+    <div class="brand-logo">H</div>
+    <div>
+      <div class="brand-name">HOSTECH</div>
+      
+    </div>
+  </div>
+  <span class="header-badge">Tu voz importa</span>
+</header>
+
+<div class="hero">
+  <p class="hero-eyebrow">Junio 2026 · Ciclo 1</p>
+  <h1>Cuéntanos cómo estás</h1>
+  <p>Tu opinión importa y nos ayuda a mejorar. Son pocas preguntas, toma menos de 5 minutos y es completamente anónimo.</p>
+  <div class="privacy-pill">
+    <span class="lock-icon"></span>
+    Tu identidad está protegida. Este formulario no registra tu nombre ni sesión.
+  </div>
+</div>
+
+<main class="main">
+
+  <div id="screen-intro">
+    <div class="card">
+      <div class="card-tag"><span class="dot"></span> Este mes exploramos</div>
+      <h2>Orgullo</h2>
+      <p class="sub">Este mes exploramos el sentido de orgullo que sientes por tu trabajo, tu equipo y la organización.</p>
+    </div>
+    <div class="privacy-note">
+      <div class="pn-icon"></div>
+      <p><strong>Tu privacidad está protegida.</strong> Este formulario no registra tu cuenta, tu sesión ni tu dirección IP. Los resultados llegan únicamente a <strong>Recursos Humanos</strong> y <strong>Dirección General</strong> — nadie más tiene acceso.</p>
+    </div>
+    <div class="nav-row" style="margin-top:24px;"><span></span>
+      <button class="btn-next" onclick="goTo('screen-nivel')">Comenzar →</button>
+    </div>
+  </div>
+
+  <div id="screen-nivel" style="display:none;">
+    <div class="card">
+      <div class="card-tag"><span class="dot"></span> Antes de empezar</div>
+      <h2>¿Cuál es tu nivel de puesto?</h2>
+      <p class="sub">Opcional. Nos ayuda a entender mejor las respuestas sin identificar a nadie.</p>
+      <div class="nivel-grid">
+        <div class="nivel-btn" onclick="selectNivel(this,'directivo')">
+          <div class="nivel-radio"></div>
+          <div><p class="nivel-nombre">Directivo / Gerencia</p><p class="nivel-desc">Dirección general, gerencias y jefaturas</p></div>
+        </div>
+        <div class="nivel-btn" onclick="selectNivel(this,'mando-medio')">
+          <div class="nivel-radio"></div>
+          <div><p class="nivel-nombre">Mando medio</p><p class="nivel-desc">Coordinadores, supervisores y líderes de equipo</p></div>
+        </div>
+        <div class="nivel-btn" onclick="selectNivel(this,'operativo')">
+          <div class="nivel-radio"></div>
+          <div><p class="nivel-nombre">Operativo / Colaborador</p><p class="nivel-desc">Ejecutivos, analistas, asistentes y personal de operación</p></div>
+        </div>
+        <div class="nivel-btn" onclick="selectNivel(this,'prefiero-no')">
+          <div class="nivel-radio"></div>
+          <div><p class="nivel-nombre">Prefiero no indicarlo</p><p class="nivel-desc">Tu respuesta llega igual y con el mismo peso</p></div>
+        </div>
+      </div>
+      <div class="nivel-nota">
+        <span>💡</span>
+        <p>Nunca pedimos área o departamento para proteger tu anonimato en equipos pequeños. El nivel agrupa suficientes personas para que ninguna respuesta sea identificable.</p>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo('screen-intro')">← Anterior</button>
+      <button class="btn-next" id="btn-nivel-next" onclick="goTo('screen-preguntas')" disabled>Comenzar →</button>
+    </div>
+  </div>
+
+  <div id="screen-preguntas" style="display:none;">
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="bloque-indicator"><div class="bi-dot"></div><span class="bi-text" id="bi-text">—</span></div>
+    <div id="questions-container"></div>
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="prevQ()">← Anterior</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Siguiente →</button>
+    </div>
+  </div>
+
+  <div id="screen-abierta" style="display:none;">
+    <div class="card">
+      <div class="card-tag"><span class="dot"></span> Para cerrar</div>
+      <h2>¿Algo más que quieras compartir?</h2>
+      <p class="sub" style="margin-bottom:20px;">Esta pregunta es completamente opcional. Si hay algo que los números no pudieron capturar, aquí es tu espacio.</p>
+      <label class="open-label">¿Hay algo que quieras compartir sobre cómo te has sentido este mes?</label>
+      <p class="open-sub">Opcional · Anónimo · Tu voz importa</p>
+      <textarea id="open-text" placeholder="Escribe con tus palabras. No hay respuestas correctas o incorrectas — solo tu voz." maxlength="1000" oninput="updateChar()"></textarea>
+      <p class="char-count"><span id="char-count">0</span> / 1000</p>
+    </div>
+    <div class="nav-row">
+      <button class="btn-back" onclick="goTo('screen-preguntas'); goToQ(preguntas.length-1)">← Anterior</button>
+      <button class="btn-next" onclick="enviar()">Enviar mi respuesta 💌</button>
+    </div>
+  </div>
+
+  <div id="screen-exito" style="display:none;" class="success-screen">
+    <div class="success-icon">🌸</div>
+    <h2>¡Gracias por compartir!</h2>
+    <p>Tu voz es importante para nosotros. Cada respuesta nos ayuda a hacer de HOSTECH un mejor lugar para trabajar.</p>
+    <div class="success-badge">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--main);display:inline-block;"></span>
+      Tu privacidad está protegida
+    </div>
+  </div>
+
+</main>
+
+<footer>Junio 2026 · Ciclo 1 · HOSTECH · Tu voz importa</footer>
+
+<script>
+const BLOQUE_NOMBRE = "Orgullo";
+const preguntas = [{"id": "E1", "tipo": "ancla", "texto": "¿Te sientes orgulloso/a de trabajar en esta empresa?", "opciones": ["Sí, me da gusto decir dónde trabajo", "En general sí, aunque hay cosas que me gustaría que fueran diferentes", "Tengo sentimientos encontrados al respecto", "No, no me siento orgulloso/a de trabajar aquí"]}, {"id": "E2", "tipo": "ancla", "texto": "¿Con qué frecuencia sientes que el trabajo que haces vale la pena?", "opciones": ["Frecuentemente, encuentro sentido en lo que hago", "A veces, hay momentos en que lo siento y otros en que no", "Rara vez, me cuesta encontrar significado en mi trabajo", "No, siento que lo que hago no tiene mucho sentido"]}, {"id": "E3", "tipo": "variable", "texto": "¿Te sientes orgulloso/a del equipo con el que trabajas?", "opciones": ["Sí, tengo un gran equipo y me da gusto trabajar con ellos", "En general sí, aunque hay cosas que podrían mejorar", "Es variable, hay personas que admiro y otras que me generan dudas", "No, no me siento orgulloso/a de cómo funciona mi equipo"]}, {"id": "E4", "tipo": "variable", "texto": "¿La empresa actúa de acuerdo con los valores que dice tener?", "opciones": ["Sí, veo coherencia entre lo que se dice y lo que se hace", "A veces, aunque hay brechas entre el discurso y la realidad", "Hay poca coherencia, los valores se quedan más en papel", "No, lo que se dice no tiene nada que ver con lo que se vive"]}, {"id": "E5", "tipo": "variable", "texto": "Si un amigo o familiar te preguntara si trabajar aquí es buena opción, ¿qué le dirías?", "opciones": ["Se lo recomendaría sin dudarlo", "Se lo recomendaría con algunas reservas", "Le diría que lo pensara bien antes de decidir", "No se lo recomendaría"]}, {"id": "A1-M", "tipo": "monitoreo", "bloque": "Liderazgo y dirección", "texto": "¿Tu líder directo te da la claridad que necesitas para hacer bien tu trabajo?", "opciones": ["Sí, siempre sé lo que se espera de mí", "La mayoría de las veces tengo claridad, aunque a veces me quedo con dudas", "Me cuesta entender qué se espera de mí con frecuencia", "No tengo claridad sobre lo que se espera de mí"]}, {"id": "B1-M", "tipo": "monitoreo", "bloque": "Carga y bienestar", "texto": "¿Cómo describirías tu carga de trabajo este mes?", "opciones": ["Manejable, pude hacer mi trabajo bien sin sentirme sobrepasado/a", "Algo cargado, pero lo pude sostener", "Muy exigente, hubo momentos en que sentí que no alcanzaba", "Insostenible, me sentí desbordado/a"]}, {"id": "F1-M", "tipo": "monitoreo", "bloque": "Compañerismo", "texto": "¿Sientes que perteneces a un equipo en el que te puedes apoyar?", "opciones": ["Sí, hay un equipo real y me siento parte de él", "En general sí, aunque no siempre siento ese respaldo", "A veces, depende de la situación o de con quién", "No, siento que cada quien va por su lado"]}, {"id": "C1-M", "tipo": "monitoreo", "bloque": "Comunicación y confianza", "texto": "¿Recibes a tiempo la información que necesitas para hacer bien tu trabajo?", "opciones": ["Sí, la información llega cuando la necesito", "A veces, aunque hay momentos en que me entero tarde", "Con frecuencia tengo que buscar la información por mi cuenta", "No, la falta de información me dificulta hacer mi trabajo"]}, {"id": "D1-M", "tipo": "monitoreo", "bloque": "Reconocimiento y propósito", "texto": "¿Con qué frecuencia sientes que tu trabajo es reconocido o valorado?", "opciones": ["Frecuentemente, siento que mi esfuerzo se nota y se reconoce", "A veces, aunque no de forma consistente", "Rara vez, el reconocimiento es la excepción", "No, siento que mi trabajo pasa desapercibido"]}];
+let currentQ = 0;
+const respuestas = {};
+let nivelSeleccionado = null;
+
+function goTo(id) {
+  ['screen-intro','screen-nivel','screen-preguntas','screen-abierta','screen-exito'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = 'block';
+  if (id === 'screen-preguntas') renderQ(currentQ);
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function goToQ(n) { currentQ = n; renderQ(currentQ); }
+
+function selectNivel(el, val) {
+  nivelSeleccionado = val;
+  document.querySelectorAll('.nivel-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('btn-nivel-next').disabled = false;
+}
+
+function renderQ(n) {
+  const q = preguntas[n];
+  const total = preguntas.length;
+  document.getElementById('progress-fill').style.width = Math.round((n/total)*100) + '%';
+  document.getElementById('bi-text').textContent = BLOQUE_NOMBRE + ' · Pregunta ' + (n+1) + ' de ' + total;
+  document.getElementById('btn-back').style.visibility = n === 0 ? 'hidden' : 'visible';
+  document.getElementById('btn-next').textContent = n === total-1 ? 'Continuar →' : 'Siguiente →';
+  const tipoBadge = q.tipo === 'ancla'
+    ? '<span style="background:var(--main-xl);border:1px solid var(--main-l);color:var(--main);font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;">Ancla fija</span>'
+    : q.tipo === 'variable'
+    ? '<span style="background:var(--blue-l);border:1px solid #C5CCFF;color:var(--blue);font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;">Variable C1</span>'
+    : '<span style="background:#F1EFE8;border:1px solid #D0CFC6;color:#666;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;">Monitoreo</span>';
+  const esPrimeroMonitoreo = q.tipo === 'monitoreo' && (n === 0 || preguntas[n-1].tipo !== 'monitoreo');
+  const divisor = esPrimeroMonitoreo ? `<div style='background:#F1EFE8;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;'><span style='width:8px;height:8px;border-radius:50%;background:#888;display:inline-block;flex-shrink:0;'></span><span style='font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#666;'>Monitoreo general — ${q.bloque}</span></div>` : '';
+  document.getElementById('questions-container').innerHTML = divisor + `
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <span style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);">${q.tipo === 'monitoreo' ? q.bloque : q.id}</span>
+        ${tipoBadge}
+      </div>
+      <p class="pregunta-txt">${q.texto}</p>
+      <div class="opciones">
+        ${q.opciones.map((op,i) => `
+          <div class="opcion ${respuestas[q.id]===i?'selected':''}" onclick="selectOp('${q.id}',${i},this)">
+            <div class="opcion-radio">${respuestas[q.id]===i?'<span style="width:6px;height:6px;border-radius:50%;background:var(--white);display:block;"></span>':''}</div>
+            <span class="opcion-text">${op}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function selectOp(qid, idx, el) {
+  respuestas[qid] = idx;
+  el.closest('.opciones').querySelectorAll('.opcion').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('.opcion-radio').innerHTML = '';
+  });
+  el.classList.add('selected');
+  el.querySelector('.opcion-radio').innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:var(--white);display:block;"></span>';
+}
+
+function nextQ() {
+  const q = preguntas[currentQ];
+  if (respuestas[q.id] === undefined) {
+    const card = document.getElementById('questions-container').querySelector('.card');
+    card.style.border = '1.5px solid var(--main)';
+    card.style.background = 'var(--main-xl)';
+    setTimeout(() => { card.style.border='1px solid var(--border)'; card.style.background='var(--white)'; }, 1400);
+    return;
+  }
+  if (currentQ < preguntas.length-1) { currentQ++; renderQ(currentQ); window.scrollTo({top:0,behavior:'smooth'}); }
+  else { goTo('screen-abierta'); }
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQ(currentQ); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function updateChar() {
+  document.getElementById('char-count').textContent = document.getElementById('open-text').value.length;
+}
+
+
+function enviar() {
+  goTo('screen-exito');
+  try {
+    const openText = document.getElementById('open-text') ? document.getElementById('open-text').value : '';
+    const answers = [];
+    for (let i = 0; i < preguntas.length; i++) {
+      const q = preguntas[i];
+      const idx = respuestas[q.id];
+      answers.push(idx !== undefined ? q.opciones[idx] : '');
+    }
+    while (answers.length < 10) answers.push('');
+    const data = new FormData();
+    data.append('Mes', 'Junio 2026');
+    data.append('Ciclo', 'Ciclo 1');
+    data.append('Bloque profundo', 'Orgullo');
+    data.append('Nivel de puesto', nivelSeleccionado || 'No indicado');
+    data.append('P1', answers[0]); data.append('P2', answers[1]); data.append('P3', answers[2]);
+    data.append('P4', answers[3]); data.append('P5', answers[4]); data.append('P6', answers[5]);
+    data.append('P7', answers[6]); data.append('P8', answers[7]); data.append('P9', answers[8]);
+    data.append('P10', answers[9]);
+    data.append('Respuesta abierta', openText);
+    fetch('https://formspree.io/f/mykvzela', { method: 'POST', body: data, headers: { 'Accept': 'application/json' } }).catch(() => {});
+  } catch(err) {}
+}
+
+</script>
+</body>
+</html>
